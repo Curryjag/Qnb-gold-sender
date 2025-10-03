@@ -133,8 +133,9 @@
       emailjs.init(currentAccount.publicKey);
 
       const templateParams = {
-        Late: currentData.Late,
-        Reference: currentData.Reference,
+        Order: currentData.Order,
+        Date: currentData.Date,
+        Name: currentData.Name,
         email: currentData.email
       };
 
