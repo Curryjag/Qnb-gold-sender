@@ -18,7 +18,7 @@
   </style>
 </head>
 <body>
-  <h2>QNB golders Auto Sender (Complete Version)</h2>
+  <h2>Sender 2 golders Auto (Complete Version)</h2>
   <input type="file" id="csvFile" accept=".csv" />
   
   <div id="controls">
@@ -133,8 +133,7 @@
       emailjs.init(currentAccount.publicKey);
 
       const templateParams = {
-        Order: currentData.Order,
-        Date: currentData.Date,
+        Late: currentData.Late,
         Name: currentData.Name,
         email: currentData.email
       };
