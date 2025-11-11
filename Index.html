@@ -153,32 +153,40 @@
     }
 
     // ====== SCHEDULE EMAILS ======
-    function startSending() {
-      if (dataRows.length === 0) return;
-      
-      isRunning = true;
-      isPaused = false;
-      toggleButtons();
+function scheduleNextEmail() {
+  if (!isRunning || isPaused || totalSent >= dataRows.length) return;
 
-      // Calculate time since last send
-      const lastSendTime = localStorage.getItem('lastSendTime');
-      const timeSinceLastSend = lastSendTime ? Date.now() - parseInt(lastSendTime) : 3 * 60 * 1000;
-      const timeToNextSend = Math.max(0, (3 * 60 * 1000) - timeSinceLastSend);
-      
-      // Clear any existing interval
-      if (emailInterval) clearInterval(emailInterval);
-      
-      // Initial send (either immediately or after delay)
-      if (timeSinceLastSend >= 3 * 60 * 1000) {
-        sendNextEmail();
-      } else {
-        updateStatus(`⏳ Next email in ${Math.ceil(timeToNextSend/60000)} minutes...`);
-        setTimeout(sendNextEmail, timeToNextSend);
-      }
-      
-      // Start regular interval
-      emailInterval = setInterval(sendNextEmail, 3 * 60 * 1000);
-    }
+  const randomDelay = Math.floor(Math.random() * (6 - 3 + 1) + 3) * 60 * 1000;
+  updateStatus(`⏳ Next email in ${Math.ceil(randomDelay / 60000)} minutes...`);
+
+  setTimeout(() => {
+    sendNextEmail();
+    scheduleNextEmail();
+  }, randomDelay);
+}
+
+function startSending() {
+  if (dataRows.length === 0) return;
+
+  isRunning = true;
+  isPaused = false;
+  toggleButtons();
+
+  const lastSendTime = localStorage.getItem('lastSendTime');
+  const timeSinceLastSend = lastSendTime ? Date.now() - parseInt(lastSendTime) : 3 * 60 * 1000;
+  const timeToNextSend = Math.max(0, (3 * 60 * 1000) - timeSinceLastSend);
+
+  if (timeSinceLastSend >= 3 * 60 * 1000) {
+    sendNextEmail();
+    scheduleNextEmail();
+  } else {
+    updateStatus(`⏳ Next email in ${Math.ceil(timeToNextSend / 60000)} minutes...`);
+    setTimeout(() => {
+      sendNextEmail();
+      scheduleNextEmail();
+    }, timeToNextSend);
+  }
+}
 
     // ====== CSV UPLOAD ======
     document.getElementById('csvFile').addEventListener('change', function (event) {
